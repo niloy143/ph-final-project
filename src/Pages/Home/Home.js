@@ -1,8 +1,10 @@
 import React from 'react';
 import AppointmentSection from './AppointmentSection/AppointmentSection';
 import Banner from './Banner/Banner';
+import ContactUs from './ContactUs/ContactUs';
 import InfoCards from './InforCards/InfoCards';
 import OurServices from './OurServices/OurServices';
+import Testimonial from './Testimonial/Testimonial';
 import Treatment from './Treatment/Treatment';
 
 const Home = () => {
@@ -13,6 +15,8 @@ const Home = () => {
             <OurServices />
             <Treatment />
             <AppointmentSection />
+            <Testimonial />
+            <ContactUs />
         </div>
     );
 };

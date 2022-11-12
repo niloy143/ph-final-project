@@ -28,7 +28,7 @@ const InfoCards = () => {
         }
     ]
     return (
-        <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6 my-12'>
+        <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'>
             {
                 cards.map(({ id, bg, icon, title, info }) => <div className={`${bg} text-base-100 py-12 px-6 rounded-xl flex flex-col sm:flex-row items-center gap-5`} key={id}>
                     <img src={icon} alt="" />
