@@ -7,7 +7,7 @@ const InfoCards = () => {
     const cards = [
         {
             id: 1,
-            bg: 'bg-gradient-to-r from-accent to-secondary',
+            bg: 'bg-gradient-to-r from-secondary to-primary',
             icon: infoIcon1,
             title: 'Opening Hours',
             info: 'Every time when you got a problem with your teeth.'
@@ -21,7 +21,7 @@ const InfoCards = () => {
         },
         {
             id: 3,
-            bg: 'bg-gradient-to-r from-accent to-secondary',
+            bg: 'bg-gradient-to-r from-secondary to-primary',
             icon: infoIcon3,
             title: 'Contact us now',
             info: '+000 123 456789'
