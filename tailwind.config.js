@@ -7,9 +7,9 @@ module.exports = {
     themes: [
       {
         doctorsPortal: {
-          primary: "#0FCFEC",
+          primary: "#3A4256",
           secondary: "#19D3AE",
-          accent: "#3A4256",
+          accent: "#0FCFEC",
           neutral: "#3A4256",
           "base-100": "#ffffff",
           info: "#3ABFF8",

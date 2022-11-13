@@ -35,16 +35,16 @@ const BookingModal = ({ appointment, date, setAppointment }) => {
                     <label htmlFor="booking-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <h3 className="text-xl text-secondary pt-3 pb-8 font-bold">{name}</h3>
                     <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
-                        <input type="text" className='input input-accent input-bordered' value={selectedDate} readOnly />
-                        <select className="select select-accent" name="schedule">
+                        <input type="text" className='input input-primary input-bordered' value={selectedDate} readOnly />
+                        <select className="select select-primary" name="schedule">
                             {
                                 slots.map(slot => <option value={slot} key={Math.random()}>{slot}</option>)
                             }
                         </select>
-                        <input type="text" className='input input-accent input-bordered' placeholder='Your full name' name="patientName" />
-                        <input type="number" className='input input-accent input-bordered' placeholder='Phone number' name="phone" />
-                        <input type="email" className='input input-accent input-bordered' placeholder='Email address' name="email" />
-                        <button className='btn btn-accent'>Submit</button>
+                        <input type="text" className='input input-primary input-bordered' placeholder='Your full name' name="patientName" required />
+                        <input type="number" className='input input-primary input-bordered' placeholder='Phone number' name="phone" required />
+                        <input type="email" className='input input-primary input-bordered' placeholder='Email address' name="email" required />
+                        <button className='btn btn-primary'>Submit</button>
                     </form>
                 </div>
             </div>
