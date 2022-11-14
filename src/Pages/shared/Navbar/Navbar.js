@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import ButtonSpinner from '../../../components/ButtonSpinner';
+import { PhContext } from '../../../Contexts/Contexts';
 
 const Navbar = () => {
+    const { user, userLoading, logOut } = useContext(PhContext);
+
     const menuItems = <>
         <li><NavLink className={`rounded ml-1`} to="/home">Home</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/appointment">Appointment</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/reviews">Reviews</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/about">About</NavLink></li>
-        <li><NavLink className={`rounded ml-1`} to="/login">Login</NavLink></li>
+        <li>
+            {
+                user ? <button className='btn btn-primary rounded text-white ml-1' onClick={logOut}>Sign Out</button> : <NavLink className={`rounded ml-1`} to="/login">Login</NavLink>
+            }
+        </li>
     </>
     return (
         <div className="navbar bg-base-100">
@@ -23,9 +31,12 @@ const Navbar = () => {
                 <NavLink className="btn btn-ghost normal-case text-xl" to="/home">Doctors Portal</NavLink>
             </div>
             <div className="navbar-end hidden lg:flex">
-                <ul className="menu menu-horizontal p-0">
-                    {menuItems}
-                </ul>
+                {
+                    userLoading ? <ButtonSpinner /> :
+                        <ul className="menu menu-horizontal p-0">
+                            {menuItems}
+                        </ul>
+                }
             </div>
         </div>
     );

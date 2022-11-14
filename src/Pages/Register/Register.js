@@ -1,22 +1,47 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import ButtonSpinner from '../../components/ButtonSpinner';
+import { PhContext } from '../../Contexts/Contexts';
+import BodySpinner from '../../components/BodySpinner';
 
 const Register = () => {
+    const { user, userLoading, googleSignIn, createUser, setName } = useContext(PhContext);
     const { state } = useLocation();
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
     const [registering, setRegistering] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    const submissionHandler = ({ name, email, password, confirm }, e) => {
-        
+    const submissionHandler = ({ name, email, password }, e) => {
+        setRegistering(true);
+        createUser(email, password)
+            .then(() => {
+                setName(name)
+                    .then(() => { })
+                    .catch(err => console.error(err.code))
+                    .finally(() => {
+                        setRegistering(false);
+                        e.target.reset();
+                    })
+            })
+            .catch(err => {
+                console.error(err.code)
+                setRegistering(false)
+            })
     };
 
+    const handleGoogleSignIn = () => {
+        setGoogleLoading(true);
+        googleSignIn()
+            .then(() => { })
+            .catch(() => { })
+            .finally(() => setGoogleLoading(false))
+    }
+
     return (
-        <div className='shadow rounded-xl px-6 py-12 max-w-lg mx-auto my-12 sm:my-24'>
+        userLoading ? <BodySpinner /> : user && !registering ? <Navigate to={state || '/'} /> : <div className='shadow rounded-xl px-6 py-12 max-w-lg mx-auto my-12 sm:my-24'>
             <h2 className='text-2xl font-semibold text-center pb-3'>Create New Account</h2>
             <form className='flex flex-col gap-4' onSubmit={handleSubmit(submissionHandler)}>
                 <div className="form-control">
@@ -77,7 +102,7 @@ const Register = () => {
                 <span>OR</span>
                 <hr className='w-1/2 border border-primary/25' />
             </div>
-            <button className={`flex items-center gap-2 sm:text-lg font-semibold border rounded-lg shadow w-full p-3 sm:px-6 uppercase ${googleLoading || registering ? 'text-black/25' : 'active:scale-95'} transition justify-center`} disabled={googleLoading || registering}>
+            <button className={`flex items-center gap-2 sm:text-lg font-semibold border rounded-lg shadow w-full p-3 sm:px-6 uppercase ${googleLoading || registering ? 'text-black/25' : 'active:scale-95'} transition justify-center`} disabled={googleLoading || registering} onClick={handleGoogleSignIn}>
                 {
                     googleLoading ? <ButtonSpinner /> : <FcGoogle className='text-2xl' />
                 }
