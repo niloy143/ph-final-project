@@ -49,20 +49,13 @@ const Login = () => {
             .catch(err => {
                 switch (err.code) {
                     case 'auth/missing-email':
-                        setError('email', {
-                            type: 'authentication',
-                            message: 'Please enter your email address.'
-                        }); break;
+                        toast.error('Please enter your email address.'); break;
                     case 'auth/invalid-email':
-                        setError('email', {
-                            type: 'authentication',
-                            message: 'Please enter a valid email address.'
-                        }); break;
+                        toast.error('Please enter a valid email address.'); break;
                     case 'auth/user-not-found':
-                        setError('email', {
-                            type: 'authentication',
-                            message: 'No user found with this email address.'
-                        }); break;
+                        toast.error('No user found with this email address.'); break;
+                    case 'auth/too-many-requests':
+                        toast.error('Too many requests, try some minutes later.'); break;
                     default: console.error(err.code);
                 }
             })
