@@ -1,18 +1,17 @@
 import React, { useContext, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import ButtonSpinner from '../../components/ButtonSpinner';
 import { PhContext } from '../../Contexts/Contexts';
 import BodySpinner from '../../components/BodySpinner';
+import GoogleSignIn from '../../components/GoogleSignIn';
 
 const Register = () => {
-    const { user, userLoading, googleSignIn, createUser, setName } = useContext(PhContext);
+    const { user, userLoading, createUser, setName } = useContext(PhContext);
     const { state } = useLocation();
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch, setError } = useForm();
     const [registering, setRegistering] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
 
     const submissionHandler = ({ name, email, password }, e) => {
         setRegistering(true);
@@ -27,18 +26,16 @@ const Register = () => {
                     })
             })
             .catch(err => {
+                if (err.code === 'auth/email-already-exists' || err.code === 'auth/email-already-in-use') {
+                    setError('email', {
+                        type: 'authentication',
+                        message: 'Someone has already signed in with this email address'
+                    })
+                }
                 console.error(err.code)
                 setRegistering(false)
             })
     };
-
-    const handleGoogleSignIn = () => {
-        setGoogleLoading(true);
-        googleSignIn()
-            .then(() => { })
-            .catch(() => { })
-            .finally(() => setGoogleLoading(false))
-    }
 
     return (
         userLoading ? <BodySpinner /> : user && !registering ? <Navigate to={state || '/'} /> : <div className='shadow rounded-xl px-6 py-12 max-w-lg mx-auto my-12 sm:my-24'>
@@ -94,20 +91,15 @@ const Register = () => {
                         errors.confirm && <label className='label label-text-alt text-red-600'>{errors.confirm?.message}</label>
                     }
                 </div>
-                <button className='btn btn-primary mt-3' disabled={registering || googleLoading}> {registering ? <ButtonSpinner /> : 'Create Account'} </button>
-                <p className='text-center -mt-1'>Already have an account? <NavLink to="/login" state={state} className="text-secondary underline hover:no-underline">Sign In</NavLink>.</p>
+                <button className='btn btn-primary mt-3' disabled={registering}> {registering ? <ButtonSpinner /> : 'Create Account'} </button>
+                <p className='text-center -mt-1'>Already have an account? <NavLink to="/login" state={state} className="text-secondary">Sign In</NavLink></p>
             </form>
             <div className='flex items-center gap-6 my-6 text-xl'>
                 <hr className='w-1/2 border border-primary/25' />
                 <span>OR</span>
                 <hr className='w-1/2 border border-primary/25' />
             </div>
-            <button className={`flex items-center gap-2 sm:text-lg font-semibold border rounded-lg shadow w-full p-3 sm:px-6 uppercase ${googleLoading || registering ? 'text-black/25' : 'active:scale-95'} transition justify-center`} disabled={googleLoading || registering} onClick={handleGoogleSignIn}>
-                {
-                    googleLoading ? <ButtonSpinner /> : <FcGoogle className='text-2xl' />
-                }
-                <span>Continue With Google</span>
-            </button>
+            <GoogleSignIn />
         </div>
     );
 };
