@@ -1,16 +1,19 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
+import { SpinnerRoundOutlined } from 'spinners-react';
 import BodySpinner from '../../components/BodySpinner';
 import ButtonSpinner from '../../components/ButtonSpinner';
 import GoogleSignIn from '../../components/GoogleSignIn';
 import { PhContext } from '../../Contexts/Contexts';
 
 const Login = () => {
-    const { user, userLoading, emailSignIn } = useContext(PhContext);
-    const { register, handleSubmit, formState: { errors }, setError } = useForm();
-    const { state } = useLocation();
+    const { user, userLoading, emailSignIn, forgotPass } = useContext(PhContext);
+    const { register, handleSubmit, formState: { errors }, setError, watch } = useForm();
     const [loggingIn, setLoggingIn] = useState(false);
+    const [forgetting, setForgetting] = useState(false);
+    const { state } = useLocation();
 
     const handleSignIn = ({ email, password }) => {
         setLoggingIn(true);
@@ -39,6 +42,33 @@ const Login = () => {
             .finally(() => setLoggingIn(false))
     }
 
+    const handleForgotPass = () => {
+        setForgetting(true);
+        forgotPass(watch().email)
+            .then(() => toast.success(`An email sent to ${watch().email}`))
+            .catch(err => {
+                switch (err.code) {
+                    case 'auth/missing-email':
+                        setError('email', {
+                            type: 'authentication',
+                            message: 'Please enter your email address.'
+                        }); break;
+                    case 'auth/invalid-email':
+                        setError('email', {
+                            type: 'authentication',
+                            message: 'Please enter a valid email address.'
+                        }); break;
+                    case 'auth/user-not-found':
+                        setError('email', {
+                            type: 'authentication',
+                            message: 'No user found with this email address.'
+                        }); break;
+                    default: console.error(err.code);
+                }
+            })
+            .finally(() => setForgetting(false))
+    }
+
     return (
         userLoading ? <BodySpinner /> : user && !loggingIn ? <Navigate to={state || '/'} /> : <div className='shadow rounded-xl px-6 py-12 max-w-lg mx-auto my-12 sm:my-24'>
             <h2 className='text-2xl font-semibold text-center pb-3'>Login</h2>
@@ -65,11 +95,12 @@ const Login = () => {
                     {
                         errors.password && <label className='label label-text-alt text-red-600'>{errors.password.message}</label>
                     }
-                    <NavLink to="" className="text-sm mt-1">Forgot password?</NavLink>
+                    <button className="text-sm mt-1 text-blue-600 hover:text-primary flex items-center gap-2" style={{ alignSelf: 'start' }} type="button" onClick={handleForgotPass}><span>Forgot password?</span> {forgetting && <SpinnerRoundOutlined size={16} thickness={100} speed={180} color="blue" />} </button>
                 </div>
                 <button className='btn btn-primary' disabled={loggingIn}> {loggingIn ? <ButtonSpinner /> : 'Log In'}</button>
                 <p className='text-center -mt-1'>New to Doctors Portal? <NavLink to="/register" state={state} className="text-secondary">Create new Account</NavLink></p>
             </form>
+            <Toaster />
             <div className='flex items-center gap-6 my-6 text-xl'>
                 <hr className='w-1/2 border border-primary/25' />
                 <span>OR</span>
