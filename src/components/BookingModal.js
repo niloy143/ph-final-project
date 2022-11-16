@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { format } from 'date-fns';
 import { PhContext } from '../Contexts/Contexts';
+import toast from 'react-hot-toast';
 
 const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
     const { user } = useContext(PhContext);
@@ -35,7 +36,8 @@ const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
             .then(data => {
                 if (data.acknowledged) {
                     refetch();
-                    setAppointment(null)
+                    setAppointment(null);
+                    toast.success('Booking Successful');
                 }
             })
             .catch(err => console.error(err))

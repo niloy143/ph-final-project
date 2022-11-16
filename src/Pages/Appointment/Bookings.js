@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import BookingModal from '../../components/BookingModal';
 import { useQuery } from '@tanstack/react-query';
 import BodySpinner from '../../components/BodySpinner';
+import { Toaster } from 'react-hot-toast';
 
 const Bookings = ({ date }) => {
     const [appointment, setAppointment] = useState(null);
@@ -29,6 +30,8 @@ const Bookings = ({ date }) => {
                         }
                     </div>
             }
+
+            <Toaster />
             <div>
                 {
                     appointment && <BookingModal appointment={appointment} date={date} setAppointment={setAppointment} refetch={refetch} />
