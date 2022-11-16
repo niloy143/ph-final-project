@@ -1,14 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { format } from 'date-fns';
 import { PhContext } from '../Contexts/Contexts';
 import toast from 'react-hot-toast';
+import ButtonSpinner from '../components/ButtonSpinner';
 
 const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
     const { user } = useContext(PhContext);
+    const [booking, setBooking] = useState(false);
     const { name, slots } = appointment;
     const selectedDate = format(date, 'PP');
     const handleSubmit = e => {
         e.preventDefault();
+        setBooking(true);
         const form = e.target;
         const schedule = form.schedule.value;
         const patient = form.patientName.value;
@@ -36,11 +39,18 @@ const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
             .then(data => {
                 if (data.acknowledged) {
                     refetch();
-                    setAppointment(null);
                     toast.success('Booking Successful');
                 }
+                else {
+                    toast.error(data.message);
+                }
+                setAppointment(null);
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err);
+                toast.error('Something went wrong!');
+            })
+            .finally(() => setBooking(false))
     }
     return (
         <>
@@ -59,7 +69,7 @@ const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
                             }
                         </select>
                         <input type="number" className='input input-primary input-bordered' placeholder='Phone number' name="phone" />
-                        <button className='btn btn-primary'>Submit</button>
+                        <button className='btn btn-primary' disabled={booking}>{booking ? <ButtonSpinner /> : 'Submit'}</button>
                     </form>
                 </div>
             </div>
