@@ -7,6 +7,7 @@ import BodySpinner from '../../components/BodySpinner';
 import ButtonSpinner from '../../components/ButtonSpinner';
 import GoogleSignIn from '../../components/GoogleSignIn';
 import { PhContext } from '../../Contexts/Contexts';
+import useToken from '../../Hooks/useToken';
 
 const Login = () => {
     const { user, userLoading, emailSignIn, forgotPass } = useContext(PhContext);
@@ -14,11 +15,16 @@ const Login = () => {
     const [loggingIn, setLoggingIn] = useState(false);
     const [forgetting, setForgetting] = useState(false);
     const { state } = useLocation();
+    const [tokenPayLoad, setTokenPayLoad] = useState(null);
+    useToken(tokenPayLoad, setLoggingIn);
 
     const handleSignIn = ({ email, password }) => {
         setLoggingIn(true);
         emailSignIn(email, password)
-            .then(() => { })
+            .then(result => {
+                const { displayName, email, uid } = result.user;
+                setTokenPayLoad({ displayName, email, uid });
+            })
             .catch(err => {
                 switch (err.code) {
                     case 'auth/user-not-found':
@@ -38,8 +44,8 @@ const Login = () => {
                         }); break;
                     default:
                 }
+                setLoggingIn(false);
             })
-            .finally(() => setLoggingIn(false))
     }
 
     const handleForgotPass = () => {
@@ -99,7 +105,7 @@ const Login = () => {
                 <span>OR</span>
                 <hr className='w-1/2 border border-primary/25' />
             </div>
-            <GoogleSignIn />
+            <GoogleSignIn loading={loggingIn} setLoading={setLoggingIn} />
         </div>
     );
 };

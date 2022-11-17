@@ -6,23 +6,27 @@ import ButtonSpinner from '../../components/ButtonSpinner';
 import { PhContext } from '../../Contexts/Contexts';
 import BodySpinner from '../../components/BodySpinner';
 import GoogleSignIn from '../../components/GoogleSignIn';
+import useToken from '../../Hooks/useToken';
 
 const Register = () => {
     const { user, userLoading, createUser, setName } = useContext(PhContext);
     const { state } = useLocation();
     const { register, handleSubmit, formState: { errors }, watch, setError } = useForm();
     const [registering, setRegistering] = useState(false);
+    const [registeredUser, setRegisteredUser] = useState(null);
+    useToken(registeredUser, setRegistering);
 
     const submissionHandler = ({ name, email, password }, e) => {
         setRegistering(true);
         createUser(email, password)
-            .then(() => {
+            .then(result => {
                 setName(name)
                     .then(() => { })
                     .catch(err => console.error(err.code))
                     .finally(() => {
-                        setRegistering(false);
                         e.target.reset();
+                        const { displayName, email, uid } = result.user;
+                        setRegisteredUser({ displayName, email, uid });
                     })
             })
             .catch(err => {
@@ -99,7 +103,7 @@ const Register = () => {
                 <span>OR</span>
                 <hr className='w-1/2 border border-primary/25' />
             </div>
-            <GoogleSignIn />
+            <GoogleSignIn loading={registering} setLoading={setRegistering} />
         </div>
     );
 };

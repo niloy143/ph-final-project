@@ -1,18 +1,27 @@
 import React, { useContext, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { PhContext } from '../Contexts/Contexts';
+import useToken from '../Hooks/useToken';
 import ButtonSpinner from './ButtonSpinner';
 
-const GoogleSignIn = () => {
+const GoogleSignIn = ({ loading, setLoading }) => {
     const [googleLoading, setGoogleLoading] = useState(false);
     const { googleSignIn } = useContext(PhContext);
+    const [loggedUser, setLoggedUser] = useState(null);
+    useToken(loggedUser, setLoading);
 
     const handleGoogleSignIn = () => {
         setGoogleLoading(true);
+        setLoading(true);
         googleSignIn()
-            .then(() => { })
-            .catch(() => { })
-            .finally(() => setGoogleLoading(false))
+            .then(result => {
+                const { displayName, email, uid } = result.user;
+                setLoggedUser({ displayName, email, uid });
+            })
+            .catch(() => {
+                setLoading(false)
+                setGoogleLoading(false)
+            })
     }
 
     return (

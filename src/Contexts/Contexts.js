@@ -20,7 +20,10 @@ const Contexts = ({ children }) => {
         return () => cancel();
     }, [])
 
-    const logOut = () => signOut(auth);
+    const logOut = () => {
+        localStorage.removeItem('doctors-portal-token');
+        return signOut(auth);
+    };
     const emailSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
     const googleSignIn = () => signInWithPopup(auth, googleProvider);
     const createUser = (email, password) => createUserWithEmailAndPassword(auth, email, password);
