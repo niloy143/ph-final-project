@@ -15,7 +15,6 @@ const Contexts = ({ children }) => {
         const cancel = onAuthStateChanged(auth, user => {
             setUser(user);
             setUserLoading(false);
-            console.log(user);
         });
         return () => cancel();
     }, [])
