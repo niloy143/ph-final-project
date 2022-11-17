@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import ButtonSpinner from '../../../components/ButtonSpinner';
 import { PhContext } from '../../../Contexts/Contexts';
+import { MdOutlineMenuOpen } from 'react-icons/md';
 
 const Navbar = () => {
     const { user, userLoading, logOut } = useContext(PhContext);
@@ -9,16 +10,13 @@ const Navbar = () => {
     const menuItems = <>
         <li><NavLink className={`rounded ml-1`} to="/home">Home</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/appointment">Appointment</NavLink></li>
+        {user && <li><NavLink className={`rounded ml-1`} to="/dashboard">Dashboard</NavLink></li>}
         <li><NavLink className={`rounded ml-1`} to="/reviews">Reviews</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/about">About</NavLink></li>
-        <li>
-            {
-                user ? <button className='btn btn-primary rounded text-white ml-1' onClick={logOut}>Sign Out</button> : <NavLink className={`rounded ml-1`} to="/login">Login</NavLink>
-            }
-        </li>
+        <li> {user ? <button className='btn btn-primary rounded text-white ml-1' onClick={logOut}>Sign Out</button> : <NavLink className={`rounded ml-1`} to="/login">Login</NavLink>} </li>
     </>
     return (
-        <div className="navbar bg-base-100">
+        <div className="navbar justify-between bg-base-100">
             <div className="navbar-start">
                 <div className="dropdown">
                     <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -38,6 +36,9 @@ const Navbar = () => {
                         </ul>
                 }
             </div>
+            <label tabIndex={0} htmlFor="dashboardMenu" className="btn btn-ghost lg:hidden">
+                <MdOutlineMenuOpen className='text-2xl' />
+            </label>
         </div>
     );
 };
