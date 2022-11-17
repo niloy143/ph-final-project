@@ -17,6 +17,13 @@ const GoogleSignIn = ({ loading, setLoading }) => {
             .then(result => {
                 const { displayName, email, uid } = result.user;
                 setLoggedUser({ displayName, email, uid });
+                fetch(`http://localhost:1234/users`, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({ displayName, email, uid, role: 'user' })
+                }).catch(() => { })
             })
             .catch(() => {
                 setLoading(false)

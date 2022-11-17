@@ -27,6 +27,13 @@ const Register = () => {
                         e.target.reset();
                         const { displayName, email, uid } = result.user;
                         setRegisteredUser({ displayName, email, uid });
+                        fetch(`http://localhost:1234/users`, {
+                            method: 'POST',
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            body: JSON.stringify({ displayName, email, uid, role: 'user' })
+                        }).catch(() => { })
                     })
             })
             .catch(err => {
