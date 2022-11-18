@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useContext } from 'react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import BodySpinner from '../../components/BodySpinner';
 import { PhContext } from '../../Contexts/Contexts';
 
@@ -15,8 +15,8 @@ const AllUsers = () => {
         }).then(res => res.json())
     })
 
-    const makeAdmin = (name, id) => {
-        fetch(`http://localhost:1234/user?candidate=${id}&admin=${user.uid}`, {
+    const roleChange = (name, id, role) => {
+        fetch(`http://localhost:1234/user?candidate=${id}&role=${role}&admin=${user.uid}`, {
             method: "PUT",
             headers: {
                 'content-type': 'application/json',
@@ -26,7 +26,7 @@ const AllUsers = () => {
             .then(res => res.json())
             .then(({ modifiedCount }) => {
                 if (!!modifiedCount) {
-                    toast.success(`${name} is made admin by ${user.displayName}`);
+                    toast.success(`${name} is ${role === 'admin' ? 'demoted to user' : 'promoted to admin'} by ${user.displayName}`);
                     refetch();
                 }
             })
@@ -36,6 +36,7 @@ const AllUsers = () => {
     return (
         isLoading ? <BodySpinner /> : users.length === undefined ? <h3 className='text-2xl my-24 text-center font-semibold text-gray-500'>Something went wrong!</h3> : <div>
             <h2 className='text-2xl text-center my-8 font-semibold'>Users List</h2>
+            <Toaster />
             <div className="overflow-x-auto">
                 <table className="table table-zebra w-full">
 
@@ -44,7 +45,8 @@ const AllUsers = () => {
                             <th></th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th></th>
+                            <th>Role</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,8 +55,9 @@ const AllUsers = () => {
                                 <th>{i + 1}</th>
                                 <td>{displayName}</td>
                                 <td>{email}</td>
+                                <td>{role}</td>
                                 <td>{
-                                    role === 'admin' ? <i>Admin</i> : <button className='btn btn-info btn-xs' onClick={() => makeAdmin(displayName, uid)}>Make Admin</button>
+                                    uid === user?.uid ? 'You' : <button className={`btn ${role !== 'admin' ? 'btn-info' : 'btn-warning'} btn-xs`} onClick={() => roleChange(displayName, uid, role)}>{role !== 'admin' ? 'Promote to Admin' : 'Demote to User'}</button>
                                 }</td>
                             </tr>)
                         }
