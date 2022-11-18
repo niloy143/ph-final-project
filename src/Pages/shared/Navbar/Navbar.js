@@ -8,9 +8,8 @@ const Navbar = () => {
     const { user, userLoading, logOut } = useContext(PhContext);
 
     const menuItems = <>
-        <li><NavLink className={`rounded ml-1`} to="/home">Home</NavLink></li>
-        <li><NavLink className={`rounded ml-1`} to="/appointment">Appointment</NavLink></li>
         {user && <li><NavLink className={`rounded ml-1`} to="/dashboard">Dashboard</NavLink></li>}
+        <li><NavLink className={`rounded ml-1`} to="/appointment">Appointment</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/reviews">Reviews</NavLink></li>
         <li><NavLink className={`rounded ml-1`} to="/about">About</NavLink></li>
         <li> {user ? <button className='btn btn-primary rounded text-white ml-1' onClick={logOut}>Sign Out</button> : <NavLink className={`rounded ml-1`} to="/login">Login</NavLink>} </li>
@@ -26,7 +25,7 @@ const Navbar = () => {
                         {menuItems}
                     </ul>
                 </div>
-                <NavLink className="btn btn-ghost normal-case text-xl" to="/home">Doctors Portal</NavLink>
+                <NavLink className="btn btn-ghost normal-case text-xl" to="/">Doctors Portal</NavLink>
             </div>
             <div className="navbar-end hidden lg:flex">
                 {
