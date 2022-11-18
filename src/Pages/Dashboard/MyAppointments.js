@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { PhContext } from "../../Contexts/Contexts";
 import BodySpinner from '../../components/BodySpinner';
 
-const Dashboard = () => {
+const MyAppointments = () => {
     const { user } = useContext(PhContext);
     const { data: bookings = [], isLoading } = useQuery({
         queryKey: ['bookings', user.email],
@@ -44,4 +44,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default MyAppointments;
