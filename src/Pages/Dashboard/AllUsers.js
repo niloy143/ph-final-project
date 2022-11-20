@@ -16,7 +16,7 @@ const AllUsers = () => {
     })
 
     const roleChange = (name, id, role) => {
-        fetch(`http://localhost:1234/user?candidate=${id}&role=${role}&admin=${user.uid}`, {
+        fetch(`http://localhost:1234/user?candidate=${id}&role=${role}&adminId=${user.uid}`, {
             method: "PUT",
             headers: {
                 'content-type': 'application/json',

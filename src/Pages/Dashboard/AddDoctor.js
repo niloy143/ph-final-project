@@ -1,16 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import ButtonSpinner from '../../components/ButtonSpinner';
+import { PhContext } from '../../Contexts/Contexts';
 
 const AddDoctor = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [submitting, setSubmitting] = useState(false);
+    const { user } = useContext(PhContext);
 
     const { data: specialties = [], isLoading } = useQuery({
         queryKey: ['doctor', 'specialties'],
-        queryFn: () => fetch(`http://localhost:1234/doctor/specialties`).then(res => res.json()).catch(err => console.error(err))
+        queryFn: () => fetch(`http://localhost:1234/doctor/specialties?adminId=${user?.uid}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('doctors-portal-token')}`
+            }
+        }).then(res => res.json()).catch(err => console.error(err))
     })
 
     const submissionHandler = ({ name, email, specialty, image }, e) => {
@@ -27,10 +33,11 @@ const AddDoctor = () => {
             .then(res => res.json())
             .then(({ data: { url: photo } }) => {
                 const doctor = { name, email, specialty, photo };
-                fetch(`http://localhost:1234/doctors`, {
+                fetch(`http://localhost:1234/doctors?adminId=${user?.uid}`, {
                     method: "POST",
                     headers: {
-                        'content-type': 'application/json'
+                        'content-type': 'application/json',
+                        authorization: `Bearer ${localStorage.getItem('doctors-portal-token')}`
                     },
                     body: JSON.stringify(doctor)
                 })
@@ -89,7 +96,7 @@ const AddDoctor = () => {
                         }
                     </select>
                     {
-                        errors.email && <label className='label label-text-alt text-red-600'>{errors.email.message}</label>
+                        errors.specialty && <label className='label label-text-alt text-red-600'>{errors.specialty.message}</label>
                     }
                 </div>
                 <div className="form-control w-full max-w-xs">

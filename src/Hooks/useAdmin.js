@@ -5,7 +5,7 @@ const useAdmin = uid => {
     const [adminLoading, setAdminLoading] = useState(true);
     useEffect(() => {
         if (uid) {
-            fetch(`http://localhost:1234/user/${uid}`, {
+            fetch(`http://localhost:1234/admin?adminId=${uid}`, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('doctors-portal-token')}`
                 }
