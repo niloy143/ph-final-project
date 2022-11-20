@@ -1,12 +1,19 @@
+import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 import ButtonSpinner from '../../components/ButtonSpinner';
 
 const AddDoctor = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [submitting, setSubmitting] = useState(false);
 
-    const submissionHandler = ({ name, email, image }) => {
+    const { data: specialties = [], isLoading } = useQuery({
+        queryKey: ['doctor', 'specialties'],
+        queryFn: () => fetch(`http://localhost:1234/doctor/specialties`).then(res => res.json()).catch(err => console.error(err))
+    })
+
+    const submissionHandler = ({ name, email, specialty, image }, e) => {
 
         const formData = new FormData();
 
@@ -19,15 +26,30 @@ const AddDoctor = () => {
         })
             .then(res => res.json())
             .then(({ data: { url: photo } }) => {
-                const doctor = { name, email, photo };
-                console.log(doctor);
-                setSubmitting(false);
+                const doctor = { name, email, specialty, photo };
+                fetch(`http://localhost:1234/doctors`, {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(doctor)
+                })
+                    .then(res => res.json())
+                    .then(({ acknowledged }) => {
+                        if (acknowledged) {
+                            toast.success(`${name} is now a doctor in Doctors Portal.`);
+                            e.target.reset();
+                        }
+                    })
+                    .catch(err => console.error(err))
             })
             .catch(err => console.error(err))
+            .finally(() => setSubmitting(false))
     }
 
     return (
         <div>
+            <Toaster />
             <h2 className='text-2xl font-semibold text-center pb-3 my-12'>Add a Doctor</h2>
             <form className='flex flex-col gap-4 max-w-xl mx-auto' onSubmit={handleSubmit(submissionHandler)}>
                 <div className="form-control">
@@ -51,6 +73,21 @@ const AddDoctor = () => {
                             pattern: { value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,20}$/g, message: 'Please enter a valid email address.' }
                         })
                     } />
+                    {
+                        errors.email && <label className='label label-text-alt text-red-600'>{errors.email.message}</label>
+                    }
+                </div>
+                <div className="form-control">
+                    <label className="label font-semibold"> Select Specialty </label>
+                    <select className='select select-bordered' {
+                        ...register('specialty', {
+                            required: 'Please select a specialty.'
+                        })
+                    }>
+                        {
+                            !isLoading && specialties.length && specialties.map(({ _id, name }) => <option key={_id} > {name} </option>)
+                        }
+                    </select>
                     {
                         errors.email && <label className='label label-text-alt text-red-600'>{errors.email.message}</label>
                     }
