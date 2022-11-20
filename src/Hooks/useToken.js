@@ -13,7 +13,7 @@ const useToken = (user, setLoading) => {
             })
                 .then(res => res.json())
                 .then(data => {
-                    localStorage.setItem('doctors-portal-token', JSON.stringify(data.token));
+                    localStorage.setItem('doctors-portal-token', data.token);
                     setLoading(false);
                 })
         }

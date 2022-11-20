@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { PhContext } from "../../Contexts/Contexts";
+import useAdmin from "../../Hooks/useAdmin";
 
 const DashboardLayout = () => {
+    const { user } = useContext(PhContext);
+    const [isAdmin] = useAdmin(user.uid);
+
     return (
         <div>
             <div className="drawer drawer-mobile">
@@ -11,7 +16,12 @@ const DashboardLayout = () => {
                     <label htmlFor="dashboardMenu" className="drawer-overlay"></label>
                     <ul className="menu gap-1 p-4 w-80 bg-base-100 text-base-content">
                         <li><NavLink to="/dashboard/my-appointments">My Appointments</NavLink></li>
-                        <li><NavLink to="/dashboard/all-users">All Users</NavLink></li>
+                        {
+                            isAdmin && <>
+                                <li><NavLink to="/dashboard/all-users">All Users</NavLink></li>
+                                <li><NavLink to="/dashboard/add-doctor">Add Doctor</NavLink></li>
+                            </>
+                        }
                     </ul>
                 </div>
             </div>
