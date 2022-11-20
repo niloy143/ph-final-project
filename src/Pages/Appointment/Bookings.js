@@ -21,11 +21,12 @@ const Bookings = ({ date }) => {
                 isLoading ? <BodySpinner /> : !isSuccess ? <h3 className='text-3xl font-semibold text-gray-400 text-center my-24'>Something went wrong!</h3> :
                     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
                         {
-                            date && data.map(({ name, slots, _id }) => <div key={_id} className="shadow-md p-8 rounded-xl flex flex-col items-center gap-2">
+                            date && data.map(({ _id, name, slots, price }) => <div key={_id} className="shadow-md p-8 rounded-xl flex flex-col items-center gap-2">
                                 <h4 className='text-secondary text-xl font-semibold'>{name}</h4>
                                 <p className='font-semibold'>{slots[0]}</p>
                                 <p className='uppercase'>{slots.length} {slots.length > 1 ? 'spaces' : 'space'} Available</p>
-                                <label disabled={!(slots.length)} htmlFor="booking-modal" className='btn bg-gradient-to-r from-secondary to-accent border-0 text-base-100' onClick={() => setAppointment({ name, slots, _id })}>BOOK APPOINTMENT</label>
+                                <small>Charge: ${price}</small>
+                                <label disabled={!(slots.length)} htmlFor="booking-modal" className='btn bg-gradient-to-r from-secondary to-accent border-0 text-base-100' onClick={() => setAppointment({ _id, name, slots, price })}>BOOK APPOINTMENT</label>
                             </div>)
                         }
                     </div>

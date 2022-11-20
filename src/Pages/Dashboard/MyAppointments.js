@@ -3,8 +3,10 @@ import React, { useContext } from 'react';
 import { PhContext } from "../../Contexts/Contexts";
 import BodySpinner from '../../components/BodySpinner';
 import toast, { Toaster } from 'react-hot-toast';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const MyAppointments = () => {
+    const { pathname } = useLocation();
     const { user } = useContext(PhContext);
     const { data: bookings = [], isLoading, refetch } = useQuery({
         queryKey: ['bookings', user.email],
@@ -46,23 +48,25 @@ const MyAppointments = () => {
                             <th>Date</th>
                             <th>Schedule</th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            bookings.map(({ _id, patientName, treatment, appointmentDate, schedule }, i) => <tr key={_id}>
+                            bookings.map(({ _id, patientName, treatment, appointmentDate, schedule, paid, price }, i) => <tr key={_id}>
                                 <th>{i + 1}</th>
                                 <td>{patientName}</td>
                                 <td>{treatment}</td>
                                 <td>{appointmentDate}</td>
                                 <td>{schedule}</td>
+                                <td>{paid ? <i>paid</i> : <NavLink className='btn btn-xs btn-accent' to={`/dashboard/payment/${_id}`} state={pathname}>pay ${price}</NavLink>}</td>
                                 <td><button className='btn btn-xs btn-error' onClick={() => cancelAppointment(_id)}>Cancel Appointment</button></td>
                             </tr>)
                         }
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div >
     );
 };
 

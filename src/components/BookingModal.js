@@ -7,7 +7,7 @@ import ButtonSpinner from '../components/ButtonSpinner';
 const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
     const { user } = useContext(PhContext);
     const [booking, setBooking] = useState(false);
-    const { name, slots } = appointment;
+    const { name, slots, price } = appointment;
     const selectedDate = format(date, 'PP');
     const handleSubmit = e => {
         e.preventDefault();
@@ -25,7 +25,9 @@ const BookingModal = ({ appointment, date, setAppointment, refetch }) => {
             schedule,
             patientName,
             phone,
-            email
+            email,
+            price,
+            paid: false
         }
 
         fetch(`http://localhost:1234/bookings`, {

@@ -12,6 +12,7 @@ import AllUsers from "../../Pages/Dashboard/AllUsers";
 import AdminRoute from "../AdminRoute/AdminRoute";
 import AddDoctor from "../../Pages/Dashboard/AddDoctor";
 import ManageDoctors from "../../Pages/Dashboard/ManageDoctors";
+import Payment from "../../Pages/Payment/Payment";
 
 const router = createBrowserRouter([
     {
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
                         path: '/dashboard/manage-doctors',
                         element: <AdminRoute><ManageDoctors /></AdminRoute>
                     },
+                    {
+                        path: '/dashboard/payment/:id',
+                        element: <PrivateRoute><Payment /></PrivateRoute>,
+                        loader: ({ params: { id } }) => id
+                    }
                 ]
             }
         ]
