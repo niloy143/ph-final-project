@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import BodySpinner from '../../components/BodySpinner';
 import { PhContext } from '../../Contexts/Contexts';
+import Confirmation from '../../components/Confirmation';
 
 const ManageDoctors = () => {
     const { user } = useContext(PhContext);
@@ -14,8 +15,9 @@ const ManageDoctors = () => {
             }
         }).then(res => res.json()).catch(err => console.error(err))
     })
+    const [modalData, setModalData] = useState(null);
 
-    const removeDoctor = (id, name) => {
+    const removeDoctor = ({ _id: id, name }) => {
         fetch(`http://localhost:1234/doctor/${id}?adminId=${user?.uid}`, {
             method: 'DELETE',
             headers: {
@@ -33,6 +35,15 @@ const ManageDoctors = () => {
     return (
         isLoading ? <BodySpinner /> : doctors.length === undefined ? <h2 className='text-center text-gray-600 text-3xl py-24 font-semibold'>Something went wrong</h2> : <div>
             <Toaster />
+            {
+                modalData && <Confirmation
+                    modalData={modalData}
+                    closeModal={setModalData}
+                    button={{ bg: 'btn-error', text: 'Remove' }}
+                    message={<>Make sure you are aware of that <b>{modalData?.name}</b> will get <b className='text-error'>removed</b> from doctors list.</>}
+                    passData={removeDoctor}
+                />
+            }
             <h2 className='text-center text-3xl pt-16 pb-8 font-semibold'>Doctors List</h2>
             <div className="overflow-x-auto">
                 <table className="table w-full">
@@ -60,7 +71,7 @@ const ManageDoctors = () => {
                                 <td>{name}</td>
                                 <td>{email}</td>
                                 <td>{specialty}</td>
-                                <td><button className='btn btn-xs btn-error' onClick={() => removeDoctor(_id, name)}>Remove</button></td>
+                                <td><label htmlFor='confirmation' className='btn btn-xs btn-error' onClick={() => setModalData({ _id, name })}>Remove</label></td>
                             </tr>)
                         }
                     </tbody>

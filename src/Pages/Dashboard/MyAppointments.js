@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { PhContext } from "../../Contexts/Contexts";
 import BodySpinner from '../../components/BodySpinner';
 import toast, { Toaster } from 'react-hot-toast';
 import { NavLink, useLocation } from 'react-router-dom';
+import Confirmation from '../../components/Confirmation';
 
 const MyAppointments = () => {
     const { pathname } = useLocation();
@@ -16,6 +17,7 @@ const MyAppointments = () => {
             }
         }).then(res => res.json())
     })
+    const [modalData, setModalData] = useState(null);
 
     const cancelAppointment = id => {
         fetch(`http://localhost:1234/bookings/${id}?email=${user?.email}`, {
@@ -60,13 +62,22 @@ const MyAppointments = () => {
                                 <td>{appointmentDate}</td>
                                 <td>{schedule}</td>
                                 <td>{paid ? <i>paid</i> : <NavLink className='btn btn-xs btn-accent' to={`/dashboard/payment/${_id}`} state={pathname}>pay ${price}</NavLink>}</td>
-                                <td><button className='btn btn-xs btn-error' onClick={() => cancelAppointment(_id)}>Cancel Appointment</button></td>
+                                <td><label htmlFor='confirmation' className='btn btn-xs btn-error' onClick={() => setModalData(_id)}>Cancel Appointment</label></td>
                             </tr>)
                         }
                     </tbody>
                 </table>
             </div>
-        </div >
+            {
+                modalData && <Confirmation
+                    modalData={modalData}
+                    closeModal={setModalData}
+                    button={{ bg: 'btn-error' }}
+                    passData={cancelAppointment}
+                    message={'Are you sure you want to cancel this appointment?'}
+                />
+            }
+        </div>
     );
 };
 
