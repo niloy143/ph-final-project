@@ -59,25 +59,28 @@ const Checkout = ({ booking }) => {
             setCardError(error?.message || confirmationError?.message);
             setProcessing(false);
         }
-        else if (paymentIntent.status === 'succeeded') {
-            const { amount, currency, created: paidAt, id: trxId } = paymentIntent;
-            const payment = { amount, currency, paidAt, trxId, _id };
+        else {
+            setCardError(null);
+            if (paymentIntent.status === 'succeeded') {
+                const { amount, currency, created: paidAt, id: trxId } = paymentIntent;
+                const payment = { amount, currency, paidAt, trxId, _id };
 
-            fetch(`http://localhost:1234/payments?email=${user?.email}`, {
-                method: "POST",
-                headers: {
-                    'content-type': 'application/json',
-                    authorization: `Bearer ${localStorage.getItem('doctors-portal-token')}`
-                },
-                body: JSON.stringify(payment)
-            })
-                .then(res => res.json())
-                .then(() => { })
-                .catch(err => console.error(err))
-                .finally(() => {
-                    setPaymentDetails(payment);
-                    setProcessing(false);
+                fetch(`http://localhost:1234/payments?email=${user?.email}`, {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                        authorization: `Bearer ${localStorage.getItem('doctors-portal-token')}`
+                    },
+                    body: JSON.stringify(payment)
                 })
+                    .then(res => res.json())
+                    .then(() => { })
+                    .catch(err => console.error(err))
+                    .finally(() => {
+                        setPaymentDetails(payment);
+                        setProcessing(false);
+                    })
+            }
         }
 
     };

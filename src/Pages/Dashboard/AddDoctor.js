@@ -4,11 +4,15 @@ import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import ButtonSpinner from '../../components/ButtonSpinner';
 import { PhContext } from '../../Contexts/Contexts';
+import useImage from '../../Hooks/useImage';
 
 const AddDoctor = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [submitting, setSubmitting] = useState(false);
     const { user } = useContext(PhContext);
+    const [img, setImg] = useState(null);
+    const [imgURL, setImgURL] = useState(null);
+    useImage(img, setImgURL);
 
     const { data: specialties = [], isLoading } = useQuery({
         queryKey: ['doctor', 'specialties'],
@@ -46,6 +50,7 @@ const AddDoctor = () => {
                         if (acknowledged) {
                             toast.success(`${name} is now a doctor in Doctors Portal.`);
                             e.target.reset();
+                            setImgURL(null);
                         }
                     })
                     .catch(err => console.error(err))
@@ -101,15 +106,18 @@ const AddDoctor = () => {
                 </div>
                 <div className="form-control w-full max-w-xs">
                     <label className="label font-semibold"> Doctor's Photo </label>
-                    <input type="file" className="file-input file-input-bordered w-full" {
-                        ...register('image', {
-                            required: 'Please choose an image file.'
-                        })
-                    } />
+                    <div className="tooltip tooltip-right" data-tip="Square Image Recommended">
+                        <input type="file" className="file-input file-input-bordered w-full" {
+                            ...register('image', {
+                                required: 'Please choose an image file.'
+                            })
+                        } onChange={e => setImg(e.target.files[0])} />
+                    </div>
                     {
                         errors.image && <label className='label label-text-alt text-red-600'>{errors.image.message}</label>
                     }
                 </div>
+                <img className='max-w-xs rounded-md' src={imgURL} alt="" />
                 <button className='btn btn-primary mt-3' disabled={submitting}> {submitting ? <ButtonSpinner /> : 'Add Doctor'} </button>
             </form>
         </div>
